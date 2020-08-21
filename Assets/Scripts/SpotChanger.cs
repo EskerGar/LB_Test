@@ -1,44 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 public class SpotChanger: MonoBehaviour
 {
-    [SerializeField] private List<Spot> spotsList;
-    [SerializeField] private List<Visitor> visitorsList;
+    [SerializeField] private Spawn spawn;
     [SerializeField] private Inputs inputs;
-    
+
+    private List<Visitor> _visitorsList;
+    private List<Spot> _spotsList;
 
     private void Start()
     {
-        Assert.IsFalse(spotsList.Count <= 0 || visitorsList.Count <= 0, "spotsList.Count <= 0 || visitorsList.Count <= 0");
+        _visitorsList = spawn.GetVisitorList();
+        _spotsList = spawn.GetSpotList();
+        Assert.IsFalse(_spotsList.Count <= 0 || _visitorsList.Count <= 0, "spotsList.Count <= 0 || visitorsList.Count <= 0");
         inputs.OnStartChangeSpots += ChangeSpots;
     }
 
     private void ChangeSpots()
     {
-        foreach (var visitor in visitorsList)
+        foreach (var visitor in _visitorsList)
         {
-            GiveVisitorPlace(visitor, spotsList);
+            GiveVisitorPlace(visitor, GetRandomFreeSpot(_spotsList));
         }
     }
 
-    private Spot GetFreeSpot(IEnumerable<Spot> spotList)
+    private Spot GetRandomFreeSpot(IEnumerable<Spot> spotList)
     {
-        var freeSpot = spotList.FirstOrDefault(spot => spot.IsFree);
-        if (freeSpot == null) return null;
-        freeSpot.IsFree = false;
-        return freeSpot;
+        var freeSpots = spotList.Where(spot => spot.IsFree).ToList();
+        return freeSpots[Random.Range(1, freeSpots.Count)];
     }
 
-    private void GiveVisitorPlace(Visitor visitor, IEnumerable<Spot> spotList)
+    private void GiveVisitorPlace(Visitor visitor, Spot spot)
     {
-        var spot = GetFreeSpot(spotList);
-        if (!visitor.CanGoToSpot(spot) && spot != null)
-            spot.IsFree = true;
+        if (spot != null)
+            visitor.CanGoToSpot(spot);
     }
 
 }

@@ -8,6 +8,7 @@
       <e p="Assets" t="Include">
         <e p="Scripts" t="Include">
           <e p="Inputs.cs" t="Include" />
+          <e p="Spawn.cs" t="Include" />
           <e p="Spot.cs" t="Include" />
           <e p="SpotChanger.cs" t="Include" />
           <e p="Visitor.cs" t="Include" />

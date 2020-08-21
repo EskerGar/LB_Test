@@ -3,31 +3,34 @@ using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-
+[RequireComponent(typeof(Rigidbody2D))]
 public class Visitor: MonoBehaviour
 {
         private Spot _mySpot;
         private Rigidbody2D _rigidbody2D;
         private const float Speed = 3f;
         private Coroutine _moveCoroutine;
+        private bool _isFirstTime = true;
 
         private void Start()
         {
                 _rigidbody2D = GetComponent<Rigidbody2D>();
         }
 
-        public bool CanGoToSpot(Spot spot)
+        public void CanGoToSpot(Spot spot)
         {
-                if(!CheckChance()) return false;
+                if(!CheckChance() && !_isFirstTime) return;
                 MoveToSpot(spot);
-                return true;
+                if(_isFirstTime) 
+                        _isFirstTime = false;
         }
         
         private void MoveToSpot(Spot spot)
         {
                 if (_mySpot != null)
                         _mySpot.IsFree = true;
-                _mySpot = spot; 
+                _mySpot = spot;
+                _mySpot.IsFree = false;
                 if(_moveCoroutine != null)
                         StopCoroutine(_moveCoroutine);
                 _moveCoroutine = StartCoroutine(MoveCoroutine());
