@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -18,6 +19,11 @@ public class SpotChanger: MonoBehaviour
         _spotsList = spawn.GetSpotList();
         Assert.IsFalse(_spotsList.Count <= 0 || _visitorsList.Count <= 0, "spotsList.Count <= 0 || visitorsList.Count <= 0");
         inputs.OnStartChangeSpots += ChangeSpots;
+    }
+
+    private void OnDestroy()
+    {
+        inputs.OnStartChangeSpots -= ChangeSpots;
     }
 
     private void ChangeSpots()
